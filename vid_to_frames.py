@@ -2,6 +2,9 @@ import time
 import cv2
 import os
 
+cap = cv2.VideoCapture(0)
+fgbg = cv2.createBackgroundSubtractorMOG2()
+
 def video_to_frames(input_loc, output_loc):
     """Function to extract frames from input video file
     and save them as separate frames in an output directory.
@@ -35,7 +38,6 @@ def video_to_frames(input_loc, output_loc):
         # Write the results back to output location.
         # cv2.imwrite(output_loc + "/%#05d.jpg" % (count+1), frame)
         im_array.append(frame)
-
         count = count + 1
         # If there are no more frames left
         if (count > (video_length-1)):
@@ -49,12 +51,14 @@ def video_to_frames(input_loc, output_loc):
             break
     return im_array
 
-
-in_loc = os.path.join("output.avi")
+in_loc = os.path.join("videos", "output.avi")
 out_loc = os.path.join("images")
 image_array = video_to_frames(in_loc, out_loc)
 
 for idx in range(0,len(image_array)):
-    cv2.imshow('frame', image_array[idx])
+    frame = image_array[idx]
+    cv2.imshow('frame', frame)
+    fgmask = fgbg.apply(frame)
+    cv2.imshow('avg',fgmask)
     if cv2.waitKey(0) & 0xFF == ord('q'):
         break
