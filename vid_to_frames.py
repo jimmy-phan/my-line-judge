@@ -1,3 +1,7 @@
+import time
+import cv2
+import os
+
 def video_to_frames(input_loc, output_loc):
     """Function to extract frames from input video file
     and save them as separate frames in an output directory.
@@ -7,9 +11,6 @@ def video_to_frames(input_loc, output_loc):
     Returns:
         None
     """
-    import time
-    import cv2
-    import os
     try:
         os.mkdir(output_loc)
     except OSError:
@@ -19,9 +20,11 @@ def video_to_frames(input_loc, output_loc):
     # Start capturing the feed
     cap = cv2.VideoCapture(input_loc)
 
+    # image array to store frames
+    im_array = []
 
     # Find the number of frames
-    video_length = int(cap.get(cv2.CV_CAP_PROP_FRAME_COUNT)) - 1
+    video_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1
     print ("Number of frames: ", video_length)
     count = 0
     print ("Converting video..\n")
@@ -30,7 +33,9 @@ def video_to_frames(input_loc, output_loc):
         # Extract the frame
         ret, frame = cap.read()
         # Write the results back to output location.
-        cv2.imwrite(output_loc + "/%#05d.jpg" % (count+1), frame)
+        # cv2.imwrite(output_loc + "/%#05d.jpg" % (count+1), frame)
+        im_array.append(frame)
+
         count = count + 1
         # If there are no more frames left
         if (count > (video_length-1)):
@@ -42,7 +47,14 @@ def video_to_frames(input_loc, output_loc):
             print ("Done extracting frames.\n%d frames extracted" % count)
             print ("It took %d seconds for conversion." % (time_end-time_start))
             break
+    return im_array
 
-        in_loc = os.path.join("videos", "output.avi")
-        out_loc = os.path.join("images")
-        video_to_frames(in_loc, out_loc)
+
+in_loc = os.path.join("output.avi")
+out_loc = os.path.join("images")
+image_array = video_to_frames(in_loc, out_loc)
+
+for idx in range(0,len(image_array)):
+    cv2.imshow('frame', image_array[idx])
+    if cv2.waitKey(0) & 0xFF == ord('q'):
+        break
