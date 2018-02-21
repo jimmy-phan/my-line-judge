@@ -3,6 +3,9 @@ import cv2
 import os
 
 cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
+cap.set(cv2.CAP_PROP_FPS, 120)
 fgbg = cv2.createBackgroundSubtractorMOG2()
 
 def video_to_frames(input_loc, output_loc):
@@ -22,6 +25,10 @@ def video_to_frames(input_loc, output_loc):
     time_start = time.time()
     # Start capturing the feed
     cap = cv2.VideoCapture(input_loc)
+    # cap = cv2.VideoCapture(0)
+    # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
+    # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
+    # cap.set(cv2.CAP_PROP_FPS, 120)
 
     # image array to store frames
     im_array = []
@@ -55,10 +62,25 @@ in_loc = os.path.join("videos", "output.avi")
 out_loc = os.path.join("images")
 image_array = video_to_frames(in_loc, out_loc)
 
+
+im_array2 = []
+
 for idx in range(0,len(image_array)):
     frame = image_array[idx]
     cv2.imshow('frame', frame)
     fgmask = fgbg.apply(frame)
+    im_array2.append(fgmask)
     cv2.imshow('avg',fgmask)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+sframe = im_array2[0]
+
+im_array3 = []
+for idx in range(0,len(im_array2)):
+    # sframe = sum(im_array2)
+    sframe = cv2.addWeighted(sframe, .25, im_array2[idx], .75, 0)
+    # sframe = cv2.add(sframe, im_array2[idx])
+    newframe = sframe
+    cv2.imshow('sframe', newframe)
     if cv2.waitKey(0) & 0xFF == ord('q'):
         break
