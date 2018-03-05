@@ -1,6 +1,4 @@
-import numpy as np
 import cv2
-import imutils
 from imutils.video import WebcamVideoStream
 from imutils.video import FPS
 import argparse
@@ -21,23 +19,15 @@ fourcc = cv2.VideoWriter_fourcc(*'XVID')
 out = cv2.VideoWriter('output.avi', fourcc, 120.0, (640, 480))
 
 # while(video.isOpened()):
-while (video.isOpened()):
-
-    frame = video.read()
-
-    out.write(frame)
-
-    cv2.imshow('frame', frame)
-
-    fps.update()
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
+while (True):
+    f = video.read()
+    if frame is not None:
+        out.write(frame)
+        cv2.imshow('frame', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
     else:
         break
-
-fps.stop()
 
 # Release everything if job is finished
 # video.release()
