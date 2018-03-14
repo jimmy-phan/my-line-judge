@@ -8,9 +8,7 @@ cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
 cap.set(cv2.CAP_PROP_FPS, 120)
-# fgbg = cv2.createBackgroundSubtractor()
 fgbg = cv2.createBackgroundSubtractorMOG2()
-# fgbg = cv2.createBackgroundSubtractorKNN()
 
 def rgb_hue(r,g,b):
     # convert the target color to HSV
@@ -103,9 +101,6 @@ for idx in range(0,len(image_array1)):
     greenFrame = image_array1[idx]
     cv2.imshow('frame', frame)
     fgmask = fgbg.apply(greenFrame)
-    # im_array2.append(fgmask)
-    # cv2.imshow('avg',fgmask)
-    # cv2.imshow('res', res)
     # different types of filter to clear up noise
     median = cv2.medianBlur(fgmask,35)
     im_array2.append(median)
@@ -115,37 +110,55 @@ for idx in range(0,len(image_array1)):
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-
-# setframe = im_array2[82]
-# setframe2 = im_array2[83]
-# # cv2.imshow('setframe', setframe)
-# # cv2.imshow('setframe2', setframe2)
-# displayVal = cv2.addWeighted(setframe, 1, setframe2, 1, 0)
-# display1 = cv2.addWeighted(displayVal, 1, im_array2[84], 1, 0)
-# display2 = cv2.addWeighted(display1, 1, im_array2[85], 1, 0)
-# display3 = cv2.addWeighted(display2, 1, im_array2[86], 1, 0)
-# display4 = cv2.addWeighted(display3, 1, im_array2[87], 1, 0)
-# display5 = cv2.addWeighted(display4, 1, im_array2[88], 1, 0)
-# display6 = cv2.addWeighted(display5, 1, im_array2[89], 1, 0)
-# display7 = cv2.addWeighted(display6, 1, im_array2[90], 1, 0)
-# display8 = cv2.addWeighted(display7, 1, im_array2[1], 1/8, 0)
-# display9 = cv2.addWeighted(display8, 1, im_array2[2], 1/9, 0)
-# display10 = cv2.addWeighted(display9, 1, im_array2[3], 1/10, 0)
-# display11 = cv2.addWeighted(display10, 1, im_array2[4], 1, 0)
-#
-# cv2.imshow('display7', display7)
-# cv2.imshow('display11', display10)
 newframe = im_array2[0]
 for idx in range(0, len(im_array2)):
     # sframe = cv2.addWeighted(newframe, 1, im_array2[idx], 0.225, -0.55556)
     sframe = cv2.addWeighted(newframe, 1, im_array2[idx], .6, -1.45555)
-    # sframe = cv2.add(sframe, im_array2[idx])q
     newframe = sframe
-    cv2.imshow('sframe', newframe)
     # if cv2.waitKey(0) & 0xFF == ord('q'):
     #     break
 
+kernel = np.ones((51,51),np.uint8)
+kernel2 = np.ones((11,11),np.uint8)
+kernel3 = np.ones((5,5),np.uint8)
+kernel4 = np.ones((20, 1), np.uint8)  # note this is a vertical kernel
+
+closing = cv2.morphologyEx(newframe, cv2.MORPH_CLOSE, kernel)
+dilate = cv2.dilate(closing, kernel2)
+
+img = dilate
+size = np.size(img)
+skel = np.zeros(img.shape, np.uint8)
+ret, img = cv2.threshold(img, 50, 50, 0)
+
+element = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15))
+
+done = False
+while not done:
+    eroded = cv2.erode(img, element)
+    temp = cv2.dilate(eroded, element)
+    temp = cv2.subtract(img, temp)
+    opening = cv2.morphologyEx(temp, cv2.MORPH_OPEN, kernel3)
+    dilate2 = cv2.dilate(opening, element)
+    skel = cv2.bitwise_or(skel, opening)
+    img = eroded.copy()
+    zeros = size - cv2.countNonZero(img)
+    if zeros == size:
+        done = True
+
+d_im = cv2.dilate(skel, kernel4, iterations=2)
+closing2 = cv2.morphologyEx(d_im, cv2.MORPH_CLOSE, kernel)
+e_im = cv2.erode(closing2, kernel2, iterations=1)
+
+cnts = cv2.findContours(e_im.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+cnts = cnts[0] if imutils.is_cv2() else cnts[1]
+c = max(cnts, key=cv2.contourArea)
+extBot = tuple(c[c[:, :, 1].argmax()][0])
+cv2.circle(e_im, extBot, 8, (255, 255, 0), -1)
+
 while(True):
-    # cv2.imshow('sframe', newframe)
+    cv2.imshow("skel", skel)
+    cv2.imshow('closing', closing)
+    cv2.imshow('e_im', e_im)
     if cv2.waitKey(0) & 0xFF == ord('q'):
         break
