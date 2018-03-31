@@ -110,6 +110,7 @@ for idx in range(0,len(image_array1)):
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+
 newframe = im_array2[0]
 for idx in range(0, len(im_array2)):
     # sframe = cv2.addWeighted(newframe, 1, im_array2[idx], 0.225, -0.55556)
