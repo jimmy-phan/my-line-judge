@@ -60,7 +60,7 @@ gray_frame = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
 # cv2.imshow("mask", mask)
 # cv2.waitKey(0)
 
-# p0 = cv2.goodFeaturesToTrack(gray_frame, mask = mask, **feature_params)
+p0 = cv2.goodFeaturesToTrack(gray_frame, mask = None, **feature_params)
 
 mask1 = np.zeros_like(first_frame)
 
@@ -68,9 +68,9 @@ while(1):
     ret, frame = cap.read()
     frame = imutils.resize(frame, width=640)
 
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
-    mask = cv2.inRange(hsv, lower_green, upper_green)
+    # hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    #
+    # mask = cv2.inRange(hsv, lower_green, upper_green)
 
     gray_frame2 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -81,8 +81,8 @@ while(1):
 
     # if cv2.waitKey(0) & 0xFF == ord('q'):
     #     break
-    p0 = cv2.goodFeaturesToTrack(gray_frame, mask=mask, **feature_params)
-    temp = p0
+    # p0 = cv2.goodFeaturesToTrack(gray_frame, mask=mask, **feature_params)
+    # temp = p0
 
     p1, st, err = cv2.calcOpticalFlowPyrLK(gray_frame, gray_frame2, p0, None, **lk_params)
 
@@ -94,12 +94,12 @@ while(1):
         c,d = old.ravel()
         mask = cv2.line(mask1, (a,b), (c,d), color[i].tolist(),2)
         frame = cv2.circle(frame, (a, b), 5, color[i].tolist(), -1)
-        img = cv2.add(frame, mask1)
-
-        cv2.imshow('frame', img)
-        k = cv2.waitKey(1) & 0xff
-        if k == ord("q"):
-            break
+        # img = cv2.add(frame, mask1)
+        #
+        # cv2.imshow('frame', img)
+        # k = cv2.waitKey(1) & 0xff
+        # if k == ord("q"):
+        #     break
 
         # Now update the previous frame and previous points
         gray_frame = gray_frame2.copy()
