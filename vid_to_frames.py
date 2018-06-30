@@ -1,3 +1,5 @@
+# This file converts a video into its individual frames and stores it into an array
+# also this file performs image blending and morphology to find the path of the ball.
 import time
 import cv2
 import os
@@ -75,6 +77,7 @@ def video_to_frames(input_loc, output_loc):
         # Write the results back to output location.
         # cv2.imwrite(output_loc + "/%#05d.jpg" % (count+1), frame)
         im_array.append(mask)
+        # im_array.append(frame)
         count = count + 1
         # If there are no more frames left
         if (count > (video_length-1)):
@@ -88,7 +91,7 @@ def video_to_frames(input_loc, output_loc):
             break
     return im_array, im_array3
 
-in_loc = os.path.join("videos", "output.avi")
+in_loc = os.path.join("videos", "output1.avi")
 out_loc = os.path.join("images")
 
 image_array1, image_array2 = video_to_frames(in_loc, out_loc)
@@ -158,6 +161,7 @@ extBot = tuple(c[c[:, :, 1].argmax()][0])
 cv2.circle(e_im, extBot, 8, (255, 255, 0), -1)
 
 while(True):
+    cv2.imshow("newframe", newframe)
     cv2.imshow("skel", skel)
     cv2.imshow('closing', closing)
     cv2.imshow('e_im', e_im)

@@ -1,5 +1,6 @@
 '''This script will be used to test different line detection
 algorithms'''
+# this script finds the lines on the court.
 import cv2
 import numpy as np
 import imutils
@@ -7,14 +8,16 @@ import imutils
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
-cap.set(cv2.CAP_PROP_FPS, 1)
+cap.set(cv2.CAP_PROP_FPS, 120)
 
 while True:
     # grab the current frame
-    (grabbed, img) = cap.read()
+    # (grabbed, img) = cap.read()
 
-    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    edges = cv2.Canny(gray,50,150,apertureSize = 3)
+    img = cv2.imread('baseline.jpg', 0)
+
+    # gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    edges = cv2.Canny(img,50,150,apertureSize = 3)
 
     lines = cv2.HoughLines(edges,1,np.pi/180,150)
     if lines is not None:
@@ -41,5 +44,6 @@ while True:
 
     # show the output image
     cv2.imshow("Image", img)
+    cv2.imshow("edges", edges)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break

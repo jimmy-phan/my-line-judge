@@ -13,7 +13,7 @@ def rgb_hue(r,g,b):
 
 
 # path to test file
-VIDEO_FILE = os.path.join("videos", "test2.mp4")
+VIDEO_FILE = os.path.join("videos", "output.avi")
 is_file = os.path.isfile(VIDEO_FILE)
 if not is_file:
     print("path to file is invalid")
@@ -64,7 +64,7 @@ while(1):
   #  else: 
  #       break
 
-    k = cv2.waitKey(50) & 0xFF
+    k = cv2.waitKey(1) & 0xFF
     if k == ord("q"):
         break
 cap.release()

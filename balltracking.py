@@ -44,14 +44,16 @@ args = vars(ap.parse_args())
 pts = deque(maxlen=args["buffer"])
 
 # define the video path
-VIDEO_FILE = os.path.join("videos", "output.avi")
-# camera = cv2.VideoCapture(VIDEO_FILE)
+VIDEO_FILE = os.path.join("videos", "output1.avi")
+camera = cv2.VideoCapture(VIDEO_FILE)
 
 # Use this block for live video
-camera = cv2.VideoCapture(0)
-camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
-camera.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
-camera.set(cv2.CAP_PROP_FPS, 120)
+# camera = cv2.VideoCapture(0)
+# camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
+# camera.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
+# camera.set(cv2.CAP_PROP_FPS, 120)
+kernel = np.ones((5,5),np.uint8)
+
 # keep looping
 while True:
     # grab the current frame
@@ -64,7 +66,7 @@ while True:
 
     # resize the frame, blur it, and convert it to the HSV
     # color space
-    frame = imutils.resize(frame, width=600)
+    frame = imutils.resize(frame, width=640)
     # blurred = cv2.GaussianBlur(frame, (11, 11), 0)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -72,11 +74,11 @@ while True:
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
     ball_mask = cv2.inRange(hsv, lower_green, upper_green)
-    ball_mask = cv2.erode(ball_mask, None, iterations=2)
+    ball_mask = cv2.erode(ball_mask, kernel, iterations=2)
     ball_mask = cv2.dilate(ball_mask, None, iterations=2)
 
     line_mask = cv2.inRange(hsv, lower_line, upper_line)
-    line_mask = cv2.erode(line_mask, None, iterations=2)
+    line_mask = cv2.erode(line_mask, kernel, iterations=2)
     line_mask = cv2.dilate(line_mask, None, iterations=2)
 
     # find contours in the mask and initialize the current
