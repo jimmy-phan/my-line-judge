@@ -21,7 +21,7 @@ def rgb_hue(r, g, b):
 # define the lower and upper boundaries of the "green"
 # ball in the HSV color space, then initialize the
 # list of tracked points
-r, g, b = (186, 209, 11)
+r, g, b = (237, 241, 42)
 hue_threshold = 5
 h = rgb_hue(r, g, b)
 upper_green = np.array([h + hue_threshold, 255, 255])
@@ -43,15 +43,15 @@ args = vars(ap.parse_args())
 
 pts = deque(maxlen=args["buffer"])
 
-# define the video path
-VIDEO_FILE = os.path.join("videos", "output1.avi")
-camera = cv2.VideoCapture(VIDEO_FILE)
+# # define the video path
+# VIDEO_FILE = os.path.join("videos", "output1.avi")
+# camera = cv2.VideoCapture(VIDEO_FILE)
 
 # Use this block for live video
-# camera = cv2.VideoCapture(0)
-# camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
-# camera.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
-# camera.set(cv2.CAP_PROP_FPS, 120)
+camera = cv2.VideoCapture(1)
+camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
+camera.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
+camera.set(cv2.CAP_PROP_FPS, 120)
 kernel = np.ones((5,5),np.uint8)
 
 # keep looping
@@ -109,7 +109,7 @@ while True:
         center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 
         # only proceed if the radius meets a minimum size
-        if radius > 10:
+        if radius > 3:
             # draw the circle and centroid on the frame,
             # then update the list of tracked points
             cv2.circle(frame, (int(x), int(y)), int(radius),

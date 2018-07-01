@@ -2,9 +2,8 @@ import numpy as np
 import imutils
 import time
 import os
-import vid_to_frames
 import cv2
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
 cap.set(cv2.CAP_PROP_FPS, 120)
@@ -15,10 +14,10 @@ while(True):
     frame = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
     # Our operations on the frame come here
 
-    # Display the resulting frame
-    if args["display"] > 0:
-        cv2.imshow("Frame", frame)
-        key = cv2.waitKey(1) & 0xFF
+    # # Display the resulting frame
+    # if args["display"] > 0:
+    #     cv2.imshow("Frame", frame)
+    #     key = cv2.waitKey(1) & 0xFF
 
 
     cv2.imshow('frame', frame)
