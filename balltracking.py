@@ -21,11 +21,11 @@ def rgb_hue(r, g, b):
 # define the lower and upper boundaries of the "green"
 # ball in the HSV color space, then initialize the
 # list of tracked points
-r, g, b = (237, 241, 42)
-hue_threshold = 5
+r, g, b = (170, 185, 126)
+hue_threshold = 20
 h = rgb_hue(r, g, b)
-upper_green = np.array([h + hue_threshold, 255, 255])
-lower_green = np.array([h - hue_threshold, 80, 80])
+upper_green = np.array([h + hue_threshold, 240, 240])
+lower_green = np.array([h - hue_threshold, 45, 45])
 
 r, g, b = (255, 255, 255)
 hue_threshold = 5
@@ -44,14 +44,15 @@ args = vars(ap.parse_args())
 pts = deque(maxlen=args["buffer"])
 
 # # define the video path
-# VIDEO_FILE = os.path.join("videos", "output1.avi")
-# camera = cv2.VideoCapture(VIDEO_FILE)
+VIDEO_FILE = os.path.join("videos", "balltest.avi")
+camera = cv2.VideoCapture(VIDEO_FILE)
 
 # Use this block for live video
-camera = cv2.VideoCapture(1)
-camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
-camera.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
-camera.set(cv2.CAP_PROP_FPS, 120)
+# camera = cv2.VideoCapture(1)
+# camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
+# camera.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
+# camera.set(cv2.CAP_PROP_FPS, 120)
+
 kernel = np.ones((5,5),np.uint8)
 
 # keep looping
@@ -75,7 +76,7 @@ while True:
     # blobs left in the mask
     ball_mask = cv2.inRange(hsv, lower_green, upper_green)
     ball_mask = cv2.erode(ball_mask, kernel, iterations=2)
-    ball_mask = cv2.dilate(ball_mask, None, iterations=2)
+    ball_mask = cv2.dilate(ball_mask, kernel, iterations=2)
 
     line_mask = cv2.inRange(hsv, lower_line, upper_line)
     line_mask = cv2.erode(line_mask, kernel, iterations=2)
