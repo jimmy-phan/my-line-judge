@@ -66,47 +66,45 @@ mask1 = np.zeros_like(first_frame)
 
 while(1):
     ret, frame = cap.read()
-    frame = imutils.resize(frame, width=640)
+    if frame is not None:
+        frame = imutils.resize(frame, width=640)
 
-    # hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    #
-    # mask = cv2.inRange(hsv, lower_green, upper_green)
-
-    gray_frame2 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-    # gray_frame2 = cv2.bitwise_and(frame,frame, mask= mask)
-
-    # cv2.imshow('gray_frame2',gray_frame2)
-    # cv2.imshow('mask', mask)
-
-    # if cv2.waitKey(0) & 0xFF == ord('q'):
-    #     break
-    # p0 = cv2.goodFeaturesToTrack(gray_frame, mask=mask, **feature_params)
-    # temp = p0
-
-    p1, st, err = cv2.calcOpticalFlowPyrLK(gray_frame, gray_frame2, p0, None, **lk_params)
-
-    good_new = p1[st==1]
-    good_old = p0[st==1]
-
-    for i,(new,old) in enumerate(zip(good_new,good_old)):
-        a,b, = new.ravel()
-        c,d = old.ravel()
-        mask = cv2.line(mask1, (a,b), (c,d), color[i].tolist(),2)
-        frame = cv2.circle(frame, (a, b), 5, color[i].tolist(), -1)
-        # img = cv2.add(frame, mask1)
+        # hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         #
-        # cv2.imshow('frame', img)
-        # k = cv2.waitKey(1) & 0xff
-        # if k == ord("q"):
+        # mask = cv2.inRange(hsv, lower_green, upper_green)
+
+        gray_frame2 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # gray_frame2 = cv2.bitwise_and(frame,frame, mask= mask)
+
+        # cv2.imshow('gray_frame2',gray_frame2)
+        # cv2.imshow('mask', mask)
+
+        # if cv2.waitKey(0) & 0xFF == ord('q'):
         #     break
+        # p0 = cv2.goodFeaturesToTrack(gray_frame, mask=mask, **feature_params)
+        # temp = p0
 
-        # Now update the previous frame and previous points
-        gray_frame = gray_frame2.copy()
-        p0 = good_new.reshape(-1, 1, 2)
+        p1, st, err = cv2.calcOpticalFlowPyrLK(gray_frame, gray_frame2, p0, None, **lk_params)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        good_new = p1[st==1]
+        good_old = p0[st==1]
+
+        for i,(new,old) in enumerate(zip(good_new,good_old)):
+            a,b, = new.ravel()
+            c,d = old.ravel()
+            mask = cv2.line(mask1, (a,b), (c,d), color[i].tolist(),2)
+            frame = cv2.circle(frame, (a, b), 5, color[i].tolist(), -1)
+            img = cv2.add(frame, mask1)
+
+            cv2.imshow('frame', img)
+
+            # Now update the previous frame and previous points
+            gray_frame = gray_frame2.copy()
+            p0 = good_new.reshape(-1, 1, 2)
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
 cv2.destroyAllWindows()
 cap.release()
