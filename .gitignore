@@ -2,3 +2,4 @@ videos/
 .idea/
 .vscode/
 env/
+*.pyc
