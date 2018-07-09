@@ -21,10 +21,10 @@ def rgb_hue(r, g, b):
 # define the lower and upper boundaries of the "green"
 # ball in the HSV color space, then initialize the
 # list of tracked points
-r, g, b = (170, 185, 126)
-hue_threshold = 20
+r, g, b = (115, 255, 95)
+hue_threshold = 30
 h = rgb_hue(r, g, b)
-upper_green = np.array([h + hue_threshold, 240, 240])
+upper_green = np.array([h + hue_threshold, 250, 250])
 lower_green = np.array([h - hue_threshold, 45, 45])
 
 r, g, b = (255, 255, 255)
@@ -53,7 +53,9 @@ camera = cv2.VideoCapture(VIDEO_FILE)
 # camera.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
 # camera.set(cv2.CAP_PROP_FPS, 120)
 
-kernel = np.ones((5,5),np.uint8)
+kernel = np.ones((3,3),np.uint8)
+element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
+
 
 # keep looping
 while True:
@@ -75,8 +77,8 @@ while True:
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
     ball_mask = cv2.inRange(hsv, lower_green, upper_green)
-    ball_mask = cv2.erode(ball_mask, kernel, iterations=2)
-    ball_mask = cv2.dilate(ball_mask, kernel, iterations=2)
+    ball_mask = cv2.erode(ball_mask, kernel, iterations=4)
+    ball_mask = cv2.dilate(ball_mask, element, iterations=4)
 
     line_mask = cv2.inRange(hsv, lower_line, upper_line)
     line_mask = cv2.erode(line_mask, kernel, iterations=2)
@@ -110,7 +112,8 @@ while True:
         center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 
         # only proceed if the radius meets a minimum size
-        if radius > 3:
+        # was originally set to 3, change this number to vary the radius.
+        if radius > 2:
             # draw the circle and centroid on the frame,
             # then update the list of tracked points
             cv2.circle(frame, (int(x), int(y)), int(radius),
