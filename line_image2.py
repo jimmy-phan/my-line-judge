@@ -22,3 +22,6 @@ for rho,theta in lines[0]:
     cv2.imshow("edges", edges)
     if cv2.waitKey(0) & 0xFF == ord('q'):
         break
+
+
+cv2.destroyAllWindows()
