@@ -22,10 +22,12 @@ def rgb_hue(r, g, b):
 # ball in the HSV color space, then initialize the
 # list of tracked points
 r, g, b = (115, 255, 95)
-hue_threshold = 30
+# r, g, b = (126, 128, 58)
+hue_threshold = 25
 h = rgb_hue(r, g, b)
 upper_green = np.array([h + hue_threshold, 250, 250])
 lower_green = np.array([h - hue_threshold, 45, 45])
+
 
 r, g, b = (255, 255, 255)
 hue_threshold = 5
@@ -44,10 +46,12 @@ args = vars(ap.parse_args())
 pts = deque(maxlen=args["buffer"])
 
 # # define the video path
-# VIDEO_FILE = os.path.join("videos", "balltest.avi")
-VIDEO_FILE = os.path.join("videos", "test2.mp4")
+# in_loc = os.path.join("videos", "balltest.avi")
+# in_loc = os.path.join("videos", "test3.avi")
 
-camera = cv2.VideoCapture(VIDEO_FILE)
+in_loc = os.path.join("videos", "test2.mp4")
+
+camera = cv2.VideoCapture(in_loc)
 
 # Use this block for live video
 # camera = cv2.VideoCapture(1)
@@ -112,13 +116,14 @@ while True:
             M = cv2.moments(c)
             center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 
+
+
             # only proceed if the radius meets a minimum size
             # was originally set to 3, change this number to vary the radius.
-            if radius > 2:
+            if radius > 3:
                 # draw the circle and centroid on the frame,
                 # then update the list of tracked points
-                cv2.circle(frame, (int(x), int(y)), int(radius),
-                           (0, 255, 255), 2)
+                cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
                 cv2.circle(frame, center, 5, (0, 0, 255), -1)
 
         # update the points queue

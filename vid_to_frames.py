@@ -39,11 +39,11 @@ def video_to_frames(input_loc):
     lower_green = np.array([h - hue_threshold, 80, 80])
 
     cap = cv2.VideoCapture(input_loc)
-    if input_loc == 0:
-        cap = cv2.VideoCapture(0)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
-        cap.set(cv2.CAP_PROP_FPS, 120)
+    # if input_loc == 0 or 1:
+    #     cap = cv2.VideoCapture(0)
+    #     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
+    #     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
+    #     cap.set(cv2.CAP_PROP_FPS, 120)
 
     # image array to store frames
     im_array1 = []
@@ -61,7 +61,8 @@ def video_to_frames(input_loc):
         # Extract the frame
         ret, frame = cap.read()
 
-        im_array1.append(frame) # append the original frame to im_array1
+        # append the original frame to im_array1
+        im_array1.append(frame)
         # Convert BGR to HSV
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -88,80 +89,84 @@ def video_to_frames(input_loc):
     return im_array1, im_array2
 
 
-in_loc = os.path.join("videos", "output1.avi")
+if __name__ == '__main__':
 
-image_array1, image_array2 = video_to_frames(in_loc)
+    # im_array1 contains the original frame, im_array2 contains the green mask
 
-im_array3 = []
+    in_loc = os.path.join("videos", "output1.avi")
 
-for idx in range(0,len(image_array2)):
-    frame = image_array1[idx]
-    greenFrame = image_array2[idx]
-    cv2.imshow('frame', frame)
-    fgmask = fgbg.apply(greenFrame)
-    # different types of filter to clear up noise
-    median = cv2.medianBlur(fgmask,35)
-    im_array3.append(median)
-    cv2.imshow('median Blur', median)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-cv2.destroyAllWindows()
+    image_array1, image_array2 = video_to_frames(in_loc)
+
+    im_array3 = []
+
+    for idx in range(0,len(image_array2)):
+        frame = image_array1[idx]
+        greenFrame = image_array2[idx]
+        cv2.imshow('frame', frame)
+        fgmask = fgbg.apply(greenFrame)
+        # different types of filter to clear up noise
+        median = cv2.medianBlur(fgmask,35)
+        im_array3.append(median)
+        cv2.imshow('median Blur', median)
+        if cv2.waitKey(0) & 0xFF == ord('q'):
+            break
+    cv2.destroyAllWindows()
 
 
-newframe = im_array3[0]
-for idx in range(0, len(im_array3)):
-    # sframe = cv2.addWeighted(newframe, 1, im_array3[idx], 0.225, -0.55556)
-    sframe = cv2.addWeighted(newframe, 1, im_array3[idx], .6, -1.45555)
-    newframe = sframe
-    # if cv2.waitKey(0) & 0xFF == ord('q'):
-    #     break
+    newframe = im_array3[0]
+    for idx in range(0, len(im_array3)):
+        # sframe = cv2.addWeighted(newframe, 1, im_array3[idx], 0.225, -0.55556)
+        sframe = cv2.addWeighted(newframe, 1, im_array3[idx], .6, -1.45555)
+        newframe = sframe
+        # if cv2.waitKey(0) & 0xFF == ord('q'):
+        #     break
 
-kernel = np.ones((51,51),np.uint8)
-kernel2 = np.ones((11,11),np.uint8)
-kernel3 = np.ones((5,5),np.uint8)
-kernel4 = np.ones((20, 1), np.uint8)  # note this is a vertical kernel
+    kernel = np.ones((51,51),np.uint8)
+    kernel2 = np.ones((11,11),np.uint8)
+    kernel3 = np.ones((5,5),np.uint8)
+    kernel4 = np.ones((20, 1), np.uint8)  # note this is a vertical kernel
 
-closing = cv2.morphologyEx(newframe, cv2.MORPH_CLOSE, kernel)
-dilate = cv2.dilate(closing, kernel2)
+    closing = cv2.morphologyEx(newframe, cv2.MORPH_CLOSE, kernel)
+    dilate = cv2.dilate(closing, kernel2)
 
-img = dilate
-size = np.size(img)
-skeleton = np.zeros(img.shape, np.uint8)
-ret, img = cv2.threshold(img, 50, 50, 0)
+    img = dilate
+    size = np.size(img)
+    skeleton = np.zeros(img.shape, np.uint8)
+    ret, img = cv2.threshold(img, 50, 50, 0)
 
-element = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15))
+    element = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15))
 
-done = False
-while not done:
-    eroded = cv2.erode(img, element)
-    temp = cv2.dilate(eroded, element)
-    temp = cv2.subtract(img, temp)
-    opening = cv2.morphologyEx(temp, cv2.MORPH_OPEN, kernel3)
-    dilate2 = cv2.dilate(opening, element)
-    skeleton = cv2.bitwise_or(skeleton, opening)
-    img = eroded.copy()
-    zeros = size - cv2.countNonZero(img)
-    if zeros == size:
-        done = True
+    done = False
+    while not done:
+        eroded = cv2.erode(img, element)
+        temp = cv2.dilate(eroded, element)
+        temp = cv2.subtract(img, temp)
+        opening = cv2.morphologyEx(temp, cv2.MORPH_OPEN, kernel3)
+        dilate2 = cv2.dilate(opening, element)
+        skeleton = cv2.bitwise_or(skeleton, opening)
+        img = eroded.copy()
+        zeros = size - cv2.countNonZero(img)
+        if zeros == size:
+            done = True
 
-d_im = cv2.dilate(skeleton, kernel4, iterations=2)
-closing2 = cv2.morphologyEx(d_im, cv2.MORPH_CLOSE, kernel)
-e_im = cv2.erode(closing2, kernel2, iterations=1)
+    d_im = cv2.dilate(skeleton, kernel4, iterations=2)
+    closing2 = cv2.morphologyEx(d_im, cv2.MORPH_CLOSE, kernel)
+    e_im = cv2.erode(closing2, kernel2, iterations=1)
 
-cnts = cv2.findContours(e_im.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-cnts = cnts[0] if imutils.is_cv2() else cnts[1]
-c = max(cnts, key=cv2.contourArea)
-extBot = tuple(c[c[:, :, 1].argmax()][0])
-cv2.circle(e_im, extBot, 8, (255, 255, 0), -1)
+    cnts = cv2.findContours(e_im.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cnts[0] if imutils.is_cv2() else cnts[1]
+    c = max(cnts, key=cv2.contourArea)
+    extBot = tuple(c[c[:, :, 1].argmax()][0])
+    cv2.circle(e_im, extBot, 8, (255, 255, 0), -1)
 
-while True:
-    # cv2.imshow("newframe", newframe)
-    # cv2.imshow("skeleton", skeleton)
-    cv2.imshow('closing', closing)
-    cv2.imshow('e_im', e_im)
-    if cv2.waitKey(0) & 0xFF == ord('q'):
-        break
+    while True:
+        # cv2.imshow("newframe", newframe)
+        # cv2.imshow("skeleton", skeleton)
+        cv2.imshow('closing', closing)
+        cv2.imshow('e_im', e_im)
+        if cv2.waitKey(0) & 0xFF == ord('q'):
+            break
 
-# cleanup the camera and close any open windows
-cap.release()
-cv2.destroyAllWindows()
+    # cleanup the camera and close any open windows
+    cap.release()
+    cv2.destroyAllWindows()

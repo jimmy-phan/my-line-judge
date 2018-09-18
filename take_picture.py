@@ -33,16 +33,16 @@ def take_picture():
     return arr
 
 
-# arr = take_picture()
-#
-# for idx in range(0,len(arr)):
-#     frame = arr[idx]
-#     cv2.imshow("Arr Pics", frame)
-#     if cv2.waitKey(0) & 0xFF == ord('q'):
-#         break
+arr = take_picture()
+
+for idx in range(0,len(arr)):
+    frame = arr[idx]
+    cv2.imshow("Arr Pics", frame)
+    if cv2.waitKey(0) & 0xFF == ord('q'):
+        break
 
 
 cv2.destroyAllWindows()
-
-if __name__ == '__main__':
-
+#
+# if __name__ == '__main__':
+#
