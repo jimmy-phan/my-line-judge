@@ -34,7 +34,7 @@ while True:
     # if k % 256 == 32:
     #     print("Recording...")
     #     if ret:
-    #         qqqq# frame = cv2.flip(frame, 0)
+    #         # frame = cv2.flip(frame, 0)
     #
     #         # # write the flipped frame
     #         out.write(frame)

@@ -15,7 +15,6 @@ while True:
     ret, frame = cap.read()
     if frame is not None:
         frame = imutils.resize(frame, width=640)
-        # frame = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
 
         cv2.imshow('frame', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
