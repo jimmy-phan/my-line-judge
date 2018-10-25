@@ -21,12 +21,28 @@ def rgb_hue(r, g, b):
 # define the lower and upper boundaries of the "green"
 # ball in the HSV color space, then initialize the
 # list of tracked points
-r, g, b = (115, 255, 95)
+# r, g, b = (115, 255, 95)
 # r, g, b = (126, 128, 58)
-hue_threshold = 25
+
+
+# Good value
+# r, g, b = (202, 219, 161)
+# hue_threshold = 2
+# h = rgb_hue(r, g, b)
+# upper_green = np.array([h + hue_threshold, 250, 250])
+# lower_green = np.array([h - hue_threshold, 45, 45])
+r, g, b = (202, 219, 161)
+# hue_threshold = 2
+# h = rgb_hue(r, g, b)
+# upper_green = np.array([h + hue_threshold, 232, 232])
+# lower_green = np.array([h - hue_threshold, 120, 120]
+#
+# r, g, b = (229, 245, 209)
+# r, g, b = (250, 254, 225)
+hue_threshold = 7
 h = rgb_hue(r, g, b)
-upper_green = np.array([h + hue_threshold, 250, 250])
-lower_green = np.array([h - hue_threshold, 45, 45])
+upper_green = np.array([h + hue_threshold, 227, 227])
+lower_green = np.array([h - hue_threshold, 96, 96])
 
 
 r, g, b = (255, 255, 255)
@@ -37,19 +53,17 @@ lower_line = np.array([h - hue_threshold, 100, 100])
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-v", "--video",
-                help="path to the (optional) video file")
-ap.add_argument("-b", "--buffer", type=int, default=64,
-                help="max buffer size")
+ap.add_argument("-v", "--video", help="path to the (optional) video file")
+ap.add_argument("-b", "--buffer", type=int, default=64, help="max buffer size")
 args = vars(ap.parse_args())
 
 pts = deque(maxlen=args["buffer"])
 
 # # define the video path
 # in_loc = os.path.join("videos", "balltest.avi")
-# in_loc = os.path.join("videos", "test3.avi")
+in_loc = os.path.join("videos", "NewCamTest6.avi")
 
-in_loc = os.path.join("videos", "test2.mp4")
+# in_loc = os.path.join("videos", "test2.mp4")
 
 camera = cv2.VideoCapture(in_loc)
 
@@ -82,7 +96,7 @@ while True:
         # a series of dilations and erosions to remove any small
         # blobs left in the mask
         ball_mask = cv2.inRange(hsv, lower_green, upper_green)
-        ball_mask = cv2.erode(ball_mask, kernel, iterations=4)
+        # ball_mask = cv2.erode(ball_mask, kernel)
         ball_mask = cv2.dilate(ball_mask, element, iterations=4)
 
         line_mask = cv2.inRange(hsv, lower_line, upper_line)
@@ -91,14 +105,12 @@ while True:
 
         # find contours in the mask and initialize the current
         # (x, y) center of the ball
-        ball_cnts = cv2.findContours(ball_mask.copy(), cv2.RETR_EXTERNAL,
-                                     cv2.CHAIN_APPROX_SIMPLE)[-2]
+        ball_cnts = cv2.findContours(ball_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         center = None
 
         # find contours in the mask and initialize the current
         # (x, y) center of the line
-        line_cnts = cv2.findContours(ball_mask.copy(), cv2.RETR_EXTERNAL,
-                                     cv2.CHAIN_APPROX_SIMPLE)[-2]
+        line_cnts = cv2.findContours(ball_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         center = None
 
         # adding the ball mask and line mask
@@ -116,11 +128,9 @@ while True:
             M = cv2.moments(c)
             center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 
-
-
             # only proceed if the radius meets a minimum size
             # was originally set to 3, change this number to vary the radius.
-            if radius > 3:
+            if radius > 1:
                 # draw the circle and centroid on the frame,
                 # then update the list of tracked points
                 cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)

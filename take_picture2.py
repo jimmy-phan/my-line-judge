@@ -9,7 +9,7 @@ def take_picture():
 
     count = 0
     arr = []
-
+    print("Press Space to take a picture, press q to stop")
     while True:
         ret, frame = cap.read()
         frame = imutils.resize(frame, width=640)
@@ -18,10 +18,12 @@ def take_picture():
         k = cv2.waitKey(1)
         if k%256 == 32:
             # SPACE pressed
-            img = "frame_{}.png".format(count)
-            cv2.imwrite(img, frame)
+            # img = "frame_{}.png".format(count)
+            # cv2.imwrite(img, frame)
             arr.append(frame)
-            print("{} written!".format(img))
+            print("Image taken")
+            # print("{} written!".format(img))
+            cv2.imshow("Image", frame)
             count += 1
 
         if cv2.waitKey(1) & 0xFF == ord('q'):

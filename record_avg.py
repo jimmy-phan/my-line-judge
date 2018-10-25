@@ -3,7 +3,6 @@ import time
 import cv2
 import os
 
-
 # Log the time
 time_start = time.time()
 # Start capturing the feed

@@ -9,7 +9,6 @@ if __name__ == '__main__':
     in_loc = os.path.join("videos", "test8.avi")
     cap = cv2.VideoCapture(in_loc)
 
-
     # Start default camera
     # cap = cv2.VideoCapture(1)
     # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)

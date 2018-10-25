@@ -2,13 +2,13 @@ import imutils
 import cv2
 import os
 
-# in_loc = os.path.join("videos", "test8.avi")
-# cap = cv2.VideoCapture(in_loc)
+in_loc = os.path.join("videos", "NewCamTest6.avi")
+cap = cv2.VideoCapture(in_loc)
 
-cap = cv2.VideoCapture(1)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
-cap.set(cv2.CAP_PROP_FPS, 120)
+# cap = cv2.VideoCapture(1)
+# cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
+# cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
+# cap.set(cv2.CAP_PROP_FPS, 120)
 
 while True:
     # Capture frame-by-frame

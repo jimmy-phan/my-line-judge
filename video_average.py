@@ -1,9 +1,14 @@
 import numpy as np
 import cv2
-cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
-cap.set(cv2.CAP_PROP_FPS, 120)
+import os
+# cap = cv2.VideoCapture(0)
+# cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
+# cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
+# cap.set(cv2.CAP_PROP_FPS, 120)
+
+# in_loc = os.path.join("videos", "test2.mp4")
+in_loc = os.path.join("videos", "NewCamTest6.avi")
+cap = cv2.VideoCapture(in_loc)
 
 # image array to store frames
 im_array = []

@@ -2,14 +2,14 @@ import numpy as np
 import imutils
 import cv2
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
 cap.set(cv2.CAP_PROP_FPS, 120)
 
 # Define the codec and create VideoWriter object
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter('test8.avi', fourcc, (cap.get(cv2.CAP_PROP_FPS)), (640, 480))
+out = cv2.VideoWriter('NewCamTest6.avi', fourcc, (cap.get(cv2.CAP_PROP_FPS)), (640, 480))
 
 while True:
     ret, frame = cap.read()
