@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import imutils
 import os
-import winsound
+import playsound
 import matplotlib.pyplot as plt
 import scipy.interpolate as inter
 from collections import deque
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     temp1 = deque(maxlen=64)
 
     # in_loc = os.path.join("videos", "test2.mp4")
-    in_loc = os.path.join("videos", "NewCamTest4.avi")
+    in_loc = os.path.join("videos", "NewCamTest2.avi")
     cap = cv2.VideoCapture(in_loc)
 
     fgbg = cv2.createBackgroundSubtractorMOG2()
@@ -61,7 +61,7 @@ if __name__ == '__main__':
         ret, frame = cap.read()
         if frame is not None:
             frame = imutils.resize(frame, width=640)
-            cv2.line(frame, start_point, end_point, (0, 0, 255), 1)
+            cv2.line(frame, start_point, end_point, (0, 0, 255), 2)
 
             ball_mask = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             fgmask = fgbg.apply(ball_mask)
@@ -101,8 +101,8 @@ if __name__ == '__main__':
                     blur_cnts = blur_cnts[0] if imutils.is_cv2() else blur_cnts[1]
 
                     centers = []
-                    for i in range(len(blur_cnts)):
-                        c = max(blur_cnts[i], key=cv2.contourArea)
+                    for k in range(len(blur_cnts)):
+                        c = max(blur_cnts[k], key=cv2.contourArea)
                         ((x, y), radius) = cv2.minEnclosingCircle(c)
                         centers.append((x, y))
                     centers.sort()
@@ -141,9 +141,11 @@ if __name__ == '__main__':
                     if x_max > x_line_max:
                         cv2.imshow("blur final", ball_blur)
                         cv2.imshow("out", final_out)
+                        playsound.playsound('uh_oh.mp3', True)
                         # cv2.imshow("frame final", frame)
                         count = 0
-                        if cv2.waitKey(0) & 0xFF == ord('q'):
+                        # if cv2.waitKey(0) & 0xFF == ord('q'):
+                        if cv2.waitKey(20):
                             # cv2.destroyWindow("frame final")
                             cv2.destroyWindow("blur final")
                             cv2.destroyWindow("out")

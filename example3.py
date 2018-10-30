@@ -144,7 +144,7 @@ if __name__ == '__main__':
             cv2.imshow("frame", frame)
             # cv2.imshow("fgmask", fgmask)
             cv2.imshow("blur", ball_blur)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            if cv2.waitKey(0) & 0xFF == ord('q'):
                 break
 
         else:

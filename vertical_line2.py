@@ -12,8 +12,12 @@ def find_line(frame):
         # frame = cv2.imread(in_loc)
         frame = imutils.resize(frame, width=640)
 
+        # edges = cv2.Canny(frame, 350, 350, apertureSize=3)
         edges = cv2.Canny(frame, 350, 350, apertureSize=3)
-        lines = cv2.HoughLinesP(edges, rho=2, theta=np.pi/180, threshold=74, maxLineGap=9, minLineLength=130)
+        # angle = np.arctan2(y2 - y1, x2 - x1) * 180. / np.pi
+
+        # lines = cv2.HoughLinesP(edges, rho=2, theta=np.pi/180, threshold=74, maxLineGap=9, minLineLength=130)
+        lines = cv2.HoughLinesP(edges, rho=4, theta=np.pi/180, threshold=74, maxLineGap=7, minLineLength=130)
 
         count = 0
         if lines is not None:
@@ -31,15 +35,14 @@ def find_line(frame):
         cv2.imshow("Line", frame)
         if cv2.waitKey(0) & 0xFF == ord('q'):
             cv2.destroyWindow("Line")
-            var = input("Which line do you want: ")
-            return lines[int(var)-1]
-
-
+            # var = input("Which line do you want: ")
+            # return lines[int(var)-1]
+            return lines[0]
+#
 # if __name__ == '__main__':
-    #
-    # frame = cv2.imread('frame_1.png')
-    # lines = find_line(frame)
-    # print(lines)
-    # x1, y1, x2, y2 = lines[0]
-    # print(x1, y1, x2, y2)
-    #
+#
+#     frame = cv2.imread('frame_1.png')
+#     lines = find_line(frame)
+#     print(lines)
+#     x1, y1, x2, y2 = lines[0]
+#     print(x1, y1, x2, y2)
